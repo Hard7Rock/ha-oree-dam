@@ -24,6 +24,7 @@ from .const import (
     CONF_DAILY_REFRESH_AT,
     CONF_MARKET,
     CONF_UPDATE_INTERVAL,
+    DEFAULT_DAILY_REFRESH_AT,
     DEFAULT_MARKET,
     DOMAIN,
     MARKET_NAMES,
@@ -68,11 +69,11 @@ class OreeOptionsFlow(OptionsFlow):
     async def async_step_init(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         if user_input is not None:
             options: dict[str, Any] = {
-                CONF_UPDATE_INTERVAL: int(user_input[CONF_UPDATE_INTERVAL])
+                CONF_UPDATE_INTERVAL: int(user_input[CONF_UPDATE_INTERVAL]),
+                # Ключ пишемо завжди: порожній рядок — свідомо вимкнений тригер,
+                # інакше після очищення поля знову підхопився б дефолт.
+                CONF_DAILY_REFRESH_AT: user_input.get(CONF_DAILY_REFRESH_AT) or "",
             }
-            # Порожнє поле часу = щоденного тригера немає.
-            if user_input.get(CONF_DAILY_REFRESH_AT):
-                options[CONF_DAILY_REFRESH_AT] = user_input[CONF_DAILY_REFRESH_AT]
             return self.async_create_entry(title="", data=options)
 
         current = self.config_entry.options
@@ -95,7 +96,9 @@ class OreeOptionsFlow(OptionsFlow):
                     vol.Optional(
                         CONF_DAILY_REFRESH_AT,
                         description={
-                            "suggested_value": current.get(CONF_DAILY_REFRESH_AT)
+                            "suggested_value": current.get(
+                                CONF_DAILY_REFRESH_AT, DEFAULT_DAILY_REFRESH_AT
+                            )
                         },
                     ): TimeSelector(),
                 }

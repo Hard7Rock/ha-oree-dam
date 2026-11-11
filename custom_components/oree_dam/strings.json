@@ -30,6 +30,11 @@
     }
   },
   "entity": {
+    "calendar": {
+      "prices": {
+        "name": "Day-ahead prices"
+      }
+    },
     "sensor": {
       "current_price": {
         "name": "Current hour price"

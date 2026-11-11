@@ -13,6 +13,7 @@ from custom_components.oree_dam.api import KYIV, URL
 from custom_components.oree_dam.const import (
     CONF_DAILY_REFRESH_AT,
     CONF_UPDATE_INTERVAL,
+    DEFAULT_DAILY_REFRESH_AT,
     DOMAIN,
 )
 
@@ -80,7 +81,8 @@ async def test_options_flow_changes_update_interval(hass, aioclient_mock):
 
 
 @pytest.mark.freeze_time(datetime(2026, 11, 11, 15, 30, tzinfo=KYIV))
-async def test_options_flow_empty_time_is_not_stored(hass, aioclient_mock):
+async def test_options_flow_stores_cleared_time_as_empty(hass, aioclient_mock):
+    """Очищене поле зберігається як "" — інакше знову підхопився б дефолт 14:05."""
     entry = await setup_entry(hass, aioclient_mock)
     result = await hass.config_entries.options.async_init(entry.entry_id)
     result = await hass.config_entries.options.async_configure(
@@ -88,7 +90,7 @@ async def test_options_flow_empty_time_is_not_stored(hass, aioclient_mock):
     )
     await hass.async_block_till_done()
     assert result["type"] == "create_entry"
-    assert CONF_DAILY_REFRESH_AT not in entry.options
+    assert entry.options[CONF_DAILY_REFRESH_AT] == ""
 
 
 @pytest.mark.freeze_time(datetime(2026, 11, 11, 15, 30, tzinfo=KYIV))
@@ -122,13 +124,16 @@ async def test_daily_time_forces_refresh(hass, aioclient_mock, freezer):
 
 
 async def test_no_daily_time_means_no_trigger(hass, aioclient_mock, freezer):
-    """Порожній час — о 14:30 нічого не відбувається, працює лише інтервал."""
+    """Свідомо очищений час — о 14:05 і 14:30 нічого не відбувається."""
     await use_kyiv_timezone(hass)
     freezer.move_to(datetime(2026, 11, 11, 14, 0, tzinfo=KYIV))
-    entry = await setup_entry(hass, aioclient_mock, {CONF_UPDATE_INTERVAL: 1440})
-    assert CONF_DAILY_REFRESH_AT not in entry.options
+    entry = await setup_entry(
+        hass, aioclient_mock, {CONF_UPDATE_INTERVAL: 1440, CONF_DAILY_REFRESH_AT: ""}
+    )
+    assert entry.options[CONF_DAILY_REFRESH_AT] == ""
 
     before = aioclient_mock.call_count
+    await fire_at(hass, freezer, datetime(2026, 11, 11, 14, 5, 1, tzinfo=KYIV))
     await fire_at(hass, freezer, datetime(2026, 11, 11, 14, 30, 1, tzinfo=KYIV))
     assert aioclient_mock.call_count == before, "оновлення без заданого часу"
 

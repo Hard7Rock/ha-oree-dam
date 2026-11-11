@@ -19,8 +19,15 @@ MAX_UPDATE_INTERVAL_MIN = 1440
 # Опції запису (кнопка «Налаштувати» на картці інтеграції).
 CONF_UPDATE_INTERVAL = "update_interval_min"
 # Час доби «HH:MM[:SS]», коли додатково смикнути оновлення поза інтервалом:
-# ціни на завтра oree публікує після обіду. Порожнє = лише інтервал.
+# ціни на завтра oree публікує після 14:00, тому дефолт — 14:05.
+# Порожній рядок = користувач свідомо вимкнув тригер; відсутній ключ = дефолт.
 CONF_DAILY_REFRESH_AT = "daily_refresh_at"
+DEFAULT_DAILY_REFRESH_AT = "14:05"
+
+# Якщо о цей час цін на завтра ще немає (oree спізнився) — перепитувати
+# кожні CATCH_UP_EVERY_MIN хвилин, але не пізніше CATCH_UP_UNTIL_HOUR.
+CATCH_UP_EVERY_MIN = 10
+CATCH_UP_UNTIL_HOUR = 18
 REQUEST_TIMEOUT_S = 30
 USER_AGENT = "HomeAssistant-oree_dam (+price polling)"
 

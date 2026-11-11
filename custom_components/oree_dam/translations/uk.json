@@ -30,6 +30,11 @@
     }
   },
   "entity": {
+    "calendar": {
+      "prices": {
+        "name": "Ціни РДН"
+      }
+    },
     "sensor": {
       "current_price": {
         "name": "Ціна поточної години"
