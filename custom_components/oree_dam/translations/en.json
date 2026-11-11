@@ -1,0 +1,57 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "OREE: day-ahead prices",
+        "description": "Hourly prices from oree.com.ua. Choose the market.",
+        "data": {
+          "market": "Market"
+        }
+      }
+    },
+    "abort": {
+      "already_configured": "This market is already configured"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "OREE polling settings",
+        "description": "How often to ask oree.com.ua for prices, and an optional fixed time for an extra daily refresh (tomorrow's prices are published in the afternoon).",
+        "data": {
+          "update_interval_min": "Polling interval (minutes)",
+          "daily_refresh_at": "Daily forced refresh time"
+        },
+        "data_description": {
+          "update_interval_min": "From 5 to 1440 minutes. Default is 30.",
+          "daily_refresh_at": "Optional. Leave empty to rely on the interval only."
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "current_price": {
+        "name": "Current hour price"
+      },
+      "next_hour_price": {
+        "name": "Next hour price"
+      },
+      "today_min": {
+        "name": "Today minimum price"
+      },
+      "today_max": {
+        "name": "Today maximum price"
+      },
+      "today_average": {
+        "name": "Today average price"
+      },
+      "tomorrow_average": {
+        "name": "Tomorrow average price"
+      },
+      "current_hour_rank": {
+        "name": "Current hour rank"
+      }
+    }
+  }
+}
